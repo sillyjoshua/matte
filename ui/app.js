@@ -1,7 +1,7 @@
 /* Matte browser — tab & omnibox logic */
 'use strict';
 
-const HOME = 'https://www.duckduckgo.com/';
+const HOME = 'https://www.google.com/';
 const content = document.getElementById('content');
 const tabsEl = document.getElementById('tabs');
 const omnibox = document.getElementById('omnibox');
@@ -15,7 +15,7 @@ function normalizeInput(text) {
   if (!t) return null;
   if (/^https?:\/\//i.test(t)) return t;
   if (/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(t) && !t.includes(' ')) return 'https://' + t;
-  return 'https://duckduckgo.com/?q=' + encodeURIComponent(t);
+  return 'https://www.google.com/search?q=' + encodeURIComponent(t);
 }
 
 function createTab(url = HOME, activate = true) {
@@ -59,7 +59,7 @@ function wireWebview(tab) {
 
   wv.addEventListener('did-navigate', (e) => {
     if (tab.id === activeId && e.url) {
-      omnibox.value = e.url.startsWith('https://duckduckgo.com/?q=')
+      omnibox.value = e.url.startsWith('https://www.google.com/search?q=')
         ? decodeURIComponent(e.url.split('q=')[1] || '') : e.url;
     }
   });
@@ -94,7 +94,7 @@ function activateTab(id) {
   if (!tab) return;
   document.title = tab.title + ' — Matte';
   const url = tab.webview.getURL ? safeUrl(tab) : '';
-  omnibox.value = url.startsWith('https://duckduckgo.com/?q=')
+  omnibox.value = url.startsWith('https://www.google.com/search?q=')
     ? decodeURIComponent(url.split('q=')[1] || '') : url;
   omnibox.select();
 }
