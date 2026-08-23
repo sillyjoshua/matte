@@ -149,6 +149,98 @@ window.addEventListener('keydown', (e) => {
   else if (k === 'tab') { e.preventDefault(); if (tabs.length > 1) { const i = tabs.findIndex((t) => t.id === activeId); activateTab(tabs[(i + 1) % tabs.length].id); } }
 });
 
+/* ── Settings: themes, custom CSS, updates ─────────────────── */
+const APP_VERSION = '1.1.0';
+const UPDATE_REPO = 'sillyjoshua/matte-insider';
+
+const settingsOverlay = document.getElementById('settings-overlay');
+const themeCards = document.querySelectorAll('.theme-card');
+const customCssEl = document.getElementById('custom-css');
+const userCss = document.getElementById('user-css');
+const updateStatus = document.getElementById('update-status');
+
+function openSettings() { settingsOverlay.hidden = false; }
+function closeSettings() { settingsOverlay.hidden = true; }
+document.getElementById('btn-settings').addEventListener('click', openSettings);
+document.getElementById('settings-close').addEventListener('click', closeSettings);
+settingsOverlay.addEventListener('click', (e) => { if (e.target === settingsOverlay) closeSettings(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !settingsOverlay.hidden) closeSettings(); });
+
+/* Themes */
+function applyTheme(name) {
+  if (name === 'silvergate') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = name;
+  localStorage.setItem('matte.theme', name);
+  themeCards.forEach((c) => c.classList.toggle('selected', c.dataset.theme === name));
+}
+themeCards.forEach((card) => card.addEventListener('click', () => applyTheme(card.dataset.theme)));
+
+/* Custom CSS */
+function applyCustomCss(css, save = true) {
+  userCss.textContent = css || '';
+  if (save) localStorage.setItem('matte.customcss', css);
+}
+document.getElementById('css-apply').addEventListener('click', () => {
+  applyCustomCss(customCssEl.value);
+  customCssEl.value ? flash(updateStatus, 'Custom CSS applied.') : null;
+});
+document.getElementById('css-reset').addEventListener('click', () => {
+  customCssEl.value = '';
+  applyCustomCss('');
+});
+
+/* Updates */
+function compareVersions(a, b) {
+  const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const d = (pa[i] || 0) - (pb[i] || 0);
+    if (d) return d;
+  }
+  return 0;
+}
+
+async function checkForUpdates(auto = false) {
+  const banner = document.getElementById('update-banner');
+  try {
+    const res = await fetch(`https://api.github.com/repos/${UPDATE_REPO}/releases/latest`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rel = await res.json();
+    const tag = (rel.tag_name || '').replace(/[^0-9.]/g, '') || '0';
+    const newer = compareVersions(tag, APP_VERSION) > 0;
+    if (newer && rel.html_url) {
+      document.getElementById('update-text').textContent =
+        `Matte ${tag} is available — you have ${APP_VERSION}.`;
+      document.getElementById('update-link').href = rel.html_url;
+      banner.hidden = false;
+      updateStatus.textContent = `Update available: Matte ${tag}!`;
+      updateStatus.className = 'newer';
+    } else {
+      if (!auto) { updateStatus.textContent = `You're up to date (v${APP_VERSION}).`; updateStatus.className = 'okay'; }
+    }
+  } catch (err) {
+    if (!auto) { updateStatus.textContent = 'Could not check for updates (offline?).'; updateStatus.className = ''; }
+  }
+}
+document.getElementById('check-updates').addEventListener('click', () => checkForUpdates(false));
+document.getElementById('update-dismiss').addEventListener('click', () => {
+  document.getElementById('update-banner').hidden = true;
+});
+document.getElementById('auto-update').addEventListener('change', (e) => {
+  localStorage.setItem('matte.autoupdate', e.target.checked ? '1' : '0');
+});
+
+function flash(el, msg) { el.textContent = msg; el.className = 'okay'; setTimeout(() => { el.textContent = ''; }, 2500); }
+
+/* Restore persisted settings */
+(function restoreSettings() {
+  applyTheme(localStorage.getItem('matte.theme') || 'silvergate');
+  const savedCss = localStorage.getItem('matte.customcss') || '';
+  customCssEl.value = savedCss;
+  applyCustomCss(savedCss, false);
+  document.getElementById('auto-update').checked = localStorage.getItem('matte.autoupdate') !== '0';
+  if (localStorage.getItem('matte.autoupdate') !== '0') setTimeout(() => checkForUpdates(true), 4000);
+})();
+
 /* Boot */
 const bootUrl = new URLSearchParams(location.search).get('url');
 if (bootUrl) {

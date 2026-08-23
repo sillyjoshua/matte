@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src https://api.github.com" />
   <title>Matte</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -55,6 +55,10 @@
       </span>
       <input id="omnibox" type="text" spellcheck="false" placeholder="Search or enter address" autocomplete="off" />
     </div>
+
+    <button id="btn-settings" class="icon-btn" title="Settings">
+      <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7zm7.4-2.6l1.9 1.5-1.9 3.2-2.3-.9c-.5.4-1 .7-1.6.9L15 20h-3.8l-.4-2.4a6 6 0 0 1-1.6-.9l-2.3.9-1.9-3.2 1.9-1.5a6.4 6.4 0 0 1 0-1.8l-1.9-1.5 1.9-3.2 2.3.9c.5-.4 1-.7 1.6-.9L11.2 4H15l.4 2.4c.6.2 1.1.5 1.6.9l2.3-.9 1.9 3.2-1.9 1.5c.1.6.1 1.2.1 1.8z" fill="currentColor"/></svg>
+    </button>
   </div>
 
   <div id="progressbar"><div id="progressfill"></div></div>
@@ -63,6 +67,59 @@
   <main id="content"></main>
 
   <div id="statusbar" hidden></div>
+
+  <!-- Update banner -->
+  <div id="update-banner" hidden>
+    <span id="update-text"></span>
+    <a id="update-link" href="#" target="_blank">Download</a>
+    <button id="update-dismiss">&#x2715;</button>
+  </div>
+
+  <!-- Settings overlay -->
+  <div id="settings-overlay" hidden>
+    <div id="settings-panel">
+      <header>
+        <h2>Settings</h2>
+        <button id="settings-close" title="Close">&#x2715;</button>
+      </header>
+
+      <section>
+        <h3>Theme</h3>
+        <div id="theme-grid">
+          <button class="theme-card" data-theme="silvergate"><span class="swatch sg"></span>Silver Gate</button>
+          <button class="theme-card" data-theme="midnight"><span class="swatch mn"></span>Midnight</button>
+          <button class="theme-card" data-theme="nord"><span class="swatch no"></span>Nord</button>
+          <button class="theme-card" data-theme="lightgate"><span class="swatch lg"></span>Light Gate</button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Custom CSS</h3>
+        <p class="hint">Custom stylesheet applied to Matte's interface.</p>
+        <textarea id="custom-css" spellcheck="false" placeholder="/* e.g. #urlbox { border-radius: 4px; } */"></textarea>
+        <div class="row">
+          <button id="css-apply" class="btn primary">Apply CSS</button>
+          <button id="css-reset" class="btn">Reset</button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Updates</h3>
+        <label class="check-row">
+          <input type="checkbox" id="auto-update" checked />
+          Automatically check for updates on startup
+        </label>
+        <div class="row">
+          <button id="check-updates" class="btn primary">Check for updates now</button>
+        </div>
+        <p id="update-status" class="hint"></p>
+      </section>
+
+      <footer><span>Matte · Silver Gate · v1.1.0</span></footer>
+    </div>
+  </div>
+
+  <style id="user-css"></style>
 
   <script src="app.js"></script>
 </body>

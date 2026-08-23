@@ -140,3 +140,95 @@ webview { position: absolute; inset: 0; width: 100%; height: 100%; }
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--bg-active); border-radius: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Themes ────────────────────────────────────────────────── */
+:root[data-theme="midnight"] {
+  --bg: #0a0c10; --bg-raised: #10131a; --bg-hover: #181c25; --bg-active: #212633;
+  --text: #dde3ee; --text-dim: #7d8798;
+  --accent: #7aa2ff; --accent-deep: #3d5bd9;
+}
+:root[data-theme="nord"] {
+  --bg: #2e3440; --bg-raised: #333b4a; --bg-hover: #3b4252; --bg-active: #434c5e;
+  --text: #eceff4; --text-dim: #a9b3c4;
+  --accent: #88c0d0; --accent-deep: #5e81ac; --danger: #bf616a;
+}
+:root[data-theme="lightgate"] {
+  --bg: #f3f5f9; --bg-raised: #ffffff; --bg-hover: #e6eaf2; --bg-active: #dbe1ec;
+  --text: #1c2230; --text-dim: #5d6678;
+  --accent: #5b6ee8; --accent-deep: #4051c9; --danger: #d64553;
+}
+
+/* ── Update banner ── */
+#update-banner {
+  display: flex; align-items: center; gap: 12px;
+  position: fixed; top: 96px; right: 14px; z-index: 60;
+  padding: 10px 14px; border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  color: #fff; font-size: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.45);
+}
+#update-banner a { color: #fff; font-weight: 600; text-decoration: underline; }
+#update-banner button { color: #fff; opacity: .8; }
+#update-banner button:hover { opacity: 1; }
+
+/* ── Settings overlay ── */
+#settings-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center;
+}
+#settings-panel {
+  width: min(560px, 92vw); max-height: 86vh; overflow-y: auto;
+  background: var(--bg-raised); border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 18px 60px rgba(0,0,0,.55);
+  padding: 20px 22px;
+}
+#settings-panel header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+#settings-panel h2 { font-size: 17px; }
+#settings-close { color: var(--text-dim); font-size: 13px; padding: 6px 8px; border-radius: 8px; }
+#settings-close:hover { background: var(--bg-hover); color: var(--text); }
+#settings-panel section { margin-top: 18px; }
+#settings-panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent); margin-bottom: 10px; }
+.hint { color: var(--text-dim); font-size: 11.5px; margin-bottom: 8px; }
+
+#theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.theme-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12px 8px; border-radius: var(--radius);
+  background: var(--bg); border: 1.5px solid rgba(255,255,255,.08);
+  color: var(--text-dim); font-size: 11.5px;
+  transition: border-color .15s, color .15s;
+}
+.theme-card:hover { border-color: var(--accent-deep); color: var(--text); }
+.theme-card.selected { border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 3px rgba(91,110,232,.18); }
+.swatch { width: 38px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,.15); }
+.swatch.sg { background: linear-gradient(135deg,#14161a,#5b6ee8); }
+.swatch.mn { background: linear-gradient(135deg,#0a0c10,#3d5bd9); }
+.swatch.no { background: linear-gradient(135deg,#2e3440,#88c0d0); }
+.swatch.lg { background: linear-gradient(135deg,#f3f5f9,#5b6ee8); }
+
+#custom-css {
+  width: 100%; height: 110px; resize: vertical;
+  background: var(--bg); color: var(--text);
+  border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius);
+  padding: 10px; font-family: Consolas, monospace; font-size: 12px;
+  user-select: text; outline: none;
+}
+#custom-css:focus { border-color: var(--accent-deep); }
+
+.row { display: flex; gap: 8px; margin-top: 10px; }
+.btn {
+  padding: 7px 16px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  background: var(--bg-hover); color: var(--text);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.btn:hover { background: var(--bg-active); }
+.btn.primary { background: linear-gradient(135deg, var(--accent-deep), var(--accent)); color: #fff; border: none; }
+.check-row { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.check-row input { accent-color: var(--accent-deep); width: 15px; height: 15px; }
+#update-status.okay { color: #6fd68f; }
+#update-status.newer { color: var(--accent); font-weight: 600; }
