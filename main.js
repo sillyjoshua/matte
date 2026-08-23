@@ -23,7 +23,9 @@ function createWindow() {
   });
 
   // Let links targeting new windows open as normal popups via the shell of the UI
-  win.loadFile(path.join(__dirname, 'ui', 'index.html'));
+  const argUrl = process.argv.find((a, i) => i > 1 && /^https?:\/\//i.test(a));
+  const query = argUrl ? '?url=' + encodeURIComponent(argUrl) : '';
+  win.loadFile(path.join(__dirname, 'ui', 'index.html'), { search: query });
 }
 
 app.whenReady().then(() => {

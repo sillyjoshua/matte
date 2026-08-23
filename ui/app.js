@@ -150,4 +150,9 @@ window.addEventListener('keydown', (e) => {
 });
 
 /* Boot */
-createTab(HOME);
+const bootUrl = new URLSearchParams(location.search).get('url');
+if (bootUrl) {
+  const t = createTab(decodeURIComponent(bootUrl));
+} else {
+  createTab(HOME);
+}
