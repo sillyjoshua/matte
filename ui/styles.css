@@ -1,0 +1,142 @@
+/* ── Matte · Silver Gate theme ─────────────────────────────── */
+:root {
+  --bg: #14161a;
+  --bg-raised: #1b1e24;
+  --bg-hover: #23272f;
+  --bg-active: #2b303a;
+  --text: #e6e9ef;
+  --text-dim: #9aa3af;
+  --accent: #8b9cff;
+  --accent-deep: #5b6ee8;
+  --danger: #e05565;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input { font: inherit; color: var(--text); }
+
+/* ── Title bar ── */
+#titlebar {
+  display: flex; align-items: center; gap: 6px;
+  height: 42px; padding: 0 8px 0 12px;
+  background: linear-gradient(180deg, #191c22, #15171c);
+  -webkit-app-region: drag;
+}
+.brand {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 700; letter-spacing: 2.5px; font-size: 11px; color: var(--text-dim);
+  margin-right: 8px;
+}
+.logo { width: 18px; height: 18px; }
+
+#tabs {
+  display: flex; gap: 6px; flex: 0 1 auto; max-width: 60vw;
+  overflow-x: auto; scrollbar-width: none;
+}
+#tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  -webkit-app-region: no-drag;
+  display: flex; align-items: center; gap: 8px;
+  height: 30px; padding: 0 10px;
+  max-width: 200px; min-width: 110px;
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  background: transparent;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.tab:hover { background: var(--bg-hover); }
+.tab.active {
+  background: var(--bg-active); color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.tab .tab-title { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.tab .tab-close {
+  width: 16px; height: 16px; line-height: 14px; text-align: center;
+  border-radius: 50%; font-size: 11px; flex-shrink: 0;
+}
+.tab .tab-close:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+.icon-btn {
+  -webkit-app-region: no-drag;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; color: var(--text-dim);
+  transition: background .15s, color .15s;
+}
+.icon-btn:hover:not(:disabled) { background: var(--bg-hover); color: var(--text); }
+.icon-btn:disabled { opacity: .35; cursor: default; }
+.icon-btn svg { width: 17px; height: 17px; }
+
+.win-controls { margin-left: auto; display: flex; -webkit-app-region: no-drag; }
+.win-controls button {
+  width: 44px; height: 42px; font-size: 12px; color: var(--text-dim);
+  transition: background .15s, color .15s;
+}
+.win-controls button:hover { background: var(--bg-hover); color: var(--text); }
+#btn-close:hover { background: var(--danger); color: #fff; }
+
+/* ── Toolbar ── */
+#toolbar {
+  display: flex; align-items: center; gap: 8px;
+  height: 46px; padding: 0 10px;
+  background: var(--bg-raised);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.nav-group { display: flex; gap: 2px; }
+
+#urlbox {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1; height: 32px; padding: 0 12px;
+  background: var(--bg); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 999px;
+  transition: border-color .15s, box-shadow .15s;
+}
+#urlbox:focus-within {
+  border-color: var(--accent-deep);
+  box-shadow: 0 0 0 3px rgba(91,110,232,.22);
+}
+#lockicon { color: var(--accent); display: flex; }
+#lockicon svg { width: 13px; height: 13px; }
+#omnibox {
+  flex: 1; background: none; border: none; outline: none; user-select: text;
+}
+#omnibox::placeholder { color: var(--text-dim); }
+
+/* ── Progress ── */
+#progressbar { height: 2px; background: transparent; }
+#progressfill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+  transition: width .2s ease, opacity .3s;
+  opacity: 0;
+}
+#progressfill.loading { opacity: 1; }
+
+/* ── Content ── */
+#content { position: relative; flex: 1; height: calc(100% - 90px); }
+webview { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+#statusbar {
+  position: fixed; bottom: 8px; left: 10px;
+  padding: 3px 10px; border-radius: 6px;
+  background: var(--bg-active); color: var(--text-dim);
+  font-size: 11px; pointer-events: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb { background: var(--bg-active); border-radius: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
