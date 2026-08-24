@@ -151,7 +151,7 @@ window.addEventListener('keydown', (e) => {
 
 /* ── Settings: themes, custom CSS, updates ─────────────────── */
 const APP_VERSION = '1.1.0';
-const UPDATE_REPO = 'sillyjoshua/matte-insider';
+const UPDATE_REPO = 'sillyjoshua/matte';
 
 const settingsOverlay = document.getElementById('settings-overlay');
 const themeCards = document.querySelectorAll('.theme-card');
