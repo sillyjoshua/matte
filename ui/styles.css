@@ -264,6 +264,15 @@ webview { position: absolute; inset: 0; width: 100%; height: 100%; }
 }
 #custom-css:focus { border-color: var(--accent-deep); }
 
+#jarvis-api-config input {
+  width: 100%; height: 32px; margin-top: 8px;
+  background: var(--bg); color: var(--text);
+  border: 1px solid rgba(255,255,255,.09); border-radius: var(--radius);
+  padding: 0 12px; user-select: text; outline: none; font-size: 12px;
+}
+#jarvis-api-config input:focus { border-color: var(--accent-deep); }
+#jarvis-conn-status.okay { color: #6fd68f; }
+
 .row { display: flex; gap: 8px; margin-top: 10px; }
 .btn {
   padding: 7px 16px; border-radius: 999px; font-size: 12px; font-weight: 600;

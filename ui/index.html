@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src https://api.github.com https://api.navy" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src https://api.github.com https:" />
   <title>Matte</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -110,11 +110,20 @@
 
       <section>
         <h3>Jarvis</h3>
-        <p class="hint">Type <b>“jarvis go to youtube”</b>, <b>“jarvis search cats”</b> or any natural command in the address bar. Simple commands run locally; complex ones are sent to the api.navy AI service.</p>
+        <p class="hint">Type <b>“jarvis go to youtube”</b>, <b>“jarvis search cats”</b> or any natural command in the address bar. Simple commands run locally on your device.</p>
         <label class="check-row">
-          <input type="checkbox" id="jarvis-api" checked />
-          Use api.navy AI for commands the local parser doesn't understand
+          <input type="checkbox" id="jarvis-api" />
+          Connect an AI service for complex commands
         </label>
+        <div id="jarvis-api-config" hidden>
+          <p class="hint">Bring your own key — Matte never ships with one. Your key is stored only on this device.</p>
+          <input id="jarvis-endpoint" type="text" spellcheck="false" placeholder="API endpoint (e.g. https://api.navy/v1/chat/completions)" autocomplete="off" />
+          <input id="jarvis-key" type="password" spellcheck="false" placeholder="Your API key" autocomplete="off" />
+          <div class="row">
+            <button id="jarvis-save" class="btn primary">Save connection</button>
+            <span id="jarvis-conn-status" class="hint"></span>
+          </div>
+        </div>
       </section>
 
       <section>

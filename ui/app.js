@@ -189,11 +189,14 @@ function jarvisLocalParse(cmd) {
 }
 
 async function jarvisApiParse(cmd) {
-  if (!document.getElementById('jarvis-api').checked) return null;
+  const apiOn = document.getElementById('jarvis-api').checked;
+  const endpoint = (localStorage.getItem('matte.jarvis.endpoint') || '').trim();
+  const key = (localStorage.getItem('matte.jarvis.key') || '').trim();
+  if (!apiOn || !endpoint || !key) return null; // must connect your own key
   try {
-    const res = await fetch('https://api.navy/v1/chat/completions', {
+    const res = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
       body: JSON.stringify({
         model: 'default',
         messages: [
@@ -333,6 +336,29 @@ document.getElementById('auto-update').addEventListener('change', (e) => {
   localStorage.setItem('matte.autoupdate', e.target.checked ? '1' : '0');
 });
 
+/* Jarvis API connection (bring your own key) */
+const jarvisApiToggle = document.getElementById('jarvis-api');
+const jarvisApiConfig = document.getElementById('jarvis-api-config');
+const jarvisEndpointEl = document.getElementById('jarvis-endpoint');
+const jarvisKeyEl = document.getElementById('jarvis-key');
+const jarvisConnStatus = document.getElementById('jarvis-conn-status');
+
+function refreshJarvisUi() {
+  jarvisApiConfig.hidden = !jarvisApiToggle.checked;
+}
+jarvisApiToggle.addEventListener('change', () => {
+  localStorage.setItem('matte.jarvis.api', jarvisApiToggle.checked ? '1' : '0');
+  refreshJarvisUi();
+});
+document.getElementById('jarvis-save').addEventListener('click', () => {
+  localStorage.setItem('matte.jarvis.endpoint', jarvisEndpointEl.value.trim());
+  localStorage.setItem('matte.jarvis.key', jarvisKeyEl.value.trim());
+  const ok = !!(jarvisEndpointEl.value.trim() && jarvisKeyEl.value.trim());
+  jarvisConnStatus.textContent = ok ? '✓ Connected — your key stays on this device.' : '⚠ Enter an endpoint and a key.';
+  jarvisConnStatus.className = ok ? 'hint okay' : 'hint';
+  setTimeout(() => { jarvisConnStatus.textContent = ''; }, 3000);
+});
+
 function flash(el, msg) { el.textContent = msg; el.className = 'okay'; setTimeout(() => { el.textContent = ''; }, 2500); }
 
 /* Restore persisted settings */
@@ -342,6 +368,10 @@ function flash(el, msg) { el.textContent = msg; el.className = 'okay'; setTimeou
   customCssEl.value = savedCss;
   applyCustomCss(savedCss, false);
   document.getElementById('auto-update').checked = localStorage.getItem('matte.autoupdate') !== '0';
+  jarvisApiToggle.checked = localStorage.getItem('matte.jarvis.api') === '1';
+  refreshJarvisUi();
+  jarvisEndpointEl.value = localStorage.getItem('matte.jarvis.endpoint') || '';
+  jarvisKeyEl.value = localStorage.getItem('matte.jarvis.key') || '';
   if (localStorage.getItem('matte.autoupdate') !== '0') setTimeout(() => checkForUpdates(true), 4000);
 })();
 
