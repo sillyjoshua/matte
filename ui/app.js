@@ -32,11 +32,12 @@ function createTab(url = HOME, activate = true) {
   const el = document.createElement('div');
   el.className = 'tab';
   el.dataset.id = id;
-  el.innerHTML = `<span class="tab-title"></span><button class="tab-close" title="Close tab">&#x2715;</button>`;
+  el.innerHTML = `<span class="favicon"></span><span class="tab-title"></span><button class="tab-close" title="Close tab">&#x2715;</button>`;
   el.addEventListener('click', (e) => {
     if (e.target.classList.contains('tab-close')) { closeTab(id); return; }
     activateTab(id);
   });
+  el.addEventListener('auxclick', (e) => { if (e.button === 1) closeTab(id); });
   tabsEl.appendChild(el);
   tab.el = el;
 
@@ -68,9 +69,11 @@ function wireWebview(tab) {
   });
 
   wv.addEventListener('did-start-loading', () => {
+    el.classList.add('loading');
     if (tab.id === activeId) progressFill.classList.add('loading'), setProgress(30);
   });
   wv.addEventListener('did-stop-loading', () => {
+    el.classList.remove('loading');
     if (tab.id === activeId) { setProgress(100); setTimeout(() => { progressFill.classList.remove('loading'); setProgress(0); }, 250); }
   });
 
@@ -129,10 +132,104 @@ document.getElementById('reload').addEventListener('click', () => current()?.web
 
 omnibox.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
-  const url = normalizeInput(omnibox.value);
+  handleOmniboxSubmit(omnibox.value);
+});
+
+function handleOmniboxSubmit(text) {
+  if (/^jarvis\b/i.test(text.trim())) {
+    jarvisCommand(text.trim().replace(/^jarvis\s*,?\s*/i, ''));
+    return;
+  }
+  const url = normalizeInput(text);
   if (url) current()?.webview.loadURL(url);
   current()?.webview.focus();
-});
+}
+
+/* ── Jarvis ─────────────────────────────────────────────────── */
+const KNOWN_SITES = {
+  google: 'https://www.google.com', youtube: 'https://www.youtube.com',
+  gmail: 'https://mail.google.com', maps: 'https://maps.google.com',
+  drive: 'https://drive.google.com', github: 'https://github.com',
+  reddit: 'https://www.reddit.com', twitter: 'https://twitter.com',
+  x: 'https://twitter.com', wikipedia: 'https://www.wikipedia.org',
+  amazon: 'https://www.amazon.com', netflix: 'https://www.netflix.com',
+  spotify: 'https://open.spotify.com', discord: 'https://discord.com/app',
+  twitch: 'https://www.twitch.tv', instagram: 'https://www.instagram.com',
+  facebook: 'https://www.facebook.com', stackoverflow: 'https://stackoverflow.com',
+  chatgpt: 'https://chat.openai.com', news: 'https://news.google.com'
+};
+
+const jarvisChip = document.getElementById('jarvis-chip');
+const jarvisState = document.getElementById('jarvis-state');
+
+function jarvisShow(active, ms = 2200) {
+  jarvisChip.hidden = !active;
+  jarvisState.hidden = !active;
+  if (active && ms) setTimeout(() => { jarvisChip.hidden = true; jarvisState.hidden = true; }, ms);
+}
+
+function jarvisLocalParse(cmd) {
+  const c = cmd.toLowerCase().trim();
+  const siteKey = Object.keys(KNOWN_SITES).find((k) => new RegExp(`\\b${k}\\b`).test(c));
+  // "go to / open / visit / take me to X"
+  let m = c.match(/^(?:go\s*to|open|visit|launch|take\s*me\s*to)\s+(.+)$/);
+  if (m) {
+    const target = m[1].replace(/[.!?]+$/, '');
+    if (siteKey) return { action: 'goto', url: KNOWN_SITES[siteKey] };
+    const u = normalizeInput(target);
+    if (u && /^https?:\/\//.test(u)) return { action: 'goto', url: u };
+    return { action: 'search', q: target };
+  }
+  // "search (for) X"
+  m = c.match(/^(?:search|google|look\s*up|find)(?:\s+for)?\s+(.+)$/);
+  if (m) return { action: 'search', q: m[1] };
+  // bare known-site name
+  if (siteKey && c.split(/\s+/).length <= 3) return { action: 'goto', url: KNOWN_SITES[siteKey] };
+  return null;
+}
+
+async function jarvisApiParse(cmd) {
+  if (!document.getElementById('jarvis-api').checked) return null;
+  try {
+    const res = await fetch('https://api.navy/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'default',
+        messages: [
+          { role: 'system', content:
+            'You are Jarvis inside the Matte browser. Convert the user command into JSON: {"action":"goto","url":"..."} to navigate, {"action":"search","q":"..."} to search Google, or {"action":"none"}. Reply with ONLY the JSON.' },
+          { role: 'user', content: cmd }
+        ]
+      })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const txt = data.choices?.[0]?.message?.content || '';
+    const jm = txt.match(/\{[\s\S]*\}/);
+    return jm ? JSON.parse(jm[0]) : null;
+  } catch (_) {
+    return null; // api.navy unreachable or unsupported — fail silently
+  }
+}
+
+async function jarvisCommand(cmd) {
+  if (!cmd) { omnibox.value = ''; return; }
+  jarvisShow(true, 0); // show while thinking
+  let plan = jarvisLocalParse(cmd);
+  if (!plan) plan = await jarvisApiParse(cmd);
+  jarvisShow(true);
+
+  if (plan?.action === 'goto' && plan.url) {
+    current()?.webview.loadURL(plan.url);
+  } else if (plan?.action === 'search' && plan.q) {
+    current()?.webview.loadURL('https://www.google.com/search?q=' + encodeURIComponent(plan.q));
+  } else {
+    // Last resort: just search whatever was said
+    current()?.webview.loadURL('https://www.google.com/search?q=' + encodeURIComponent(cmd));
+  }
+  current()?.webview.focus();
+}
 
 const progressFill = document.getElementById('progressfill');
 const statusbar = document.getElementById('statusbar');
@@ -150,7 +247,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 /* ── Settings: themes, custom CSS, updates ─────────────────── */
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 const UPDATE_REPO = 'sillyjoshua/matte';
 
 const settingsOverlay = document.getElementById('settings-overlay');
