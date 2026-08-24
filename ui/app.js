@@ -129,6 +129,7 @@ document.getElementById('btn-close').addEventListener('click', () => window.matt
 document.getElementById('back').addEventListener('click', () => current()?.webview.goBack());
 document.getElementById('forward').addEventListener('click', () => current()?.webview.goForward());
 document.getElementById('reload').addEventListener('click', () => current()?.webview.reload());
+document.getElementById('home').addEventListener('click', () => current()?.webview.loadURL(HOME));
 
 omnibox.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
@@ -261,7 +262,9 @@ const updateStatus = document.getElementById('update-status');
 
 function openSettings() { settingsOverlay.hidden = false; }
 function closeSettings() { settingsOverlay.hidden = true; }
-document.getElementById('btn-settings').addEventListener('click', openSettings);
+document.getElementById('btn-menu').addEventListener('click', openSettings);
+document.getElementById('btn-avatar').addEventListener('click', openSettings);
+document.getElementById('btn-star').addEventListener('click', () => flash(updateStatus, 'Bookmarks coming soon ✦'));
 document.getElementById('settings-close').addEventListener('click', closeSettings);
 settingsOverlay.addEventListener('click', (e) => { if (e.target === settingsOverlay) closeSettings(); });
 window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !settingsOverlay.hidden) closeSettings(); });
