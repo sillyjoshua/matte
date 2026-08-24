@@ -251,7 +251,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 /* ── Settings: themes, custom CSS, updates ─────────────────── */
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.2.1';
 const UPDATE_REPO = 'sillyjoshua/matte';
 
 const settingsOverlay = document.getElementById('settings-overlay');

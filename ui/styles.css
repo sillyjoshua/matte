@@ -137,7 +137,9 @@ input { font: inherit; color: var(--text); }
   background: var(--bg); border: 1px solid rgba(255,255,255,.07);
   border-radius: 999px;
   transition: border-color .15s, box-shadow .15s;
+  -webkit-app-region: no-drag;
 }
+#urlbox input { -webkit-app-region: no-drag; pointer-events: auto; }
 #urlbox:focus-within {
   border-color: var(--accent-deep);
   box-shadow: 0 0 0 3px rgba(91,110,232,.22);
