@@ -205,14 +205,21 @@ async function checkForUpdates(auto = false) {
     const res = await fetch(`https://api.github.com/repos/${UPDATE_REPO}/releases/latest`);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const rel = await res.json();
-    const tag = (rel.tag_name || '').replace(/[^0-9.]/g, '') || '0';
-    const newer = compareVersions(tag, APP_VERSION) > 0;
+    // Prefer the version embedded in the installer asset filename (Matte-Setup-X.Y.Z.exe),
+    // falling back to digits parsed from the tag name.
+    let version = '';
+    for (const a of rel.assets || []) {
+      const m = /Matte-Setup-([\d.]+)\.exe$/i.exec(a.name || '');
+      if (m) { version = m[1].replace(/\.$/, ''); break; }
+    }
+    if (!version) version = (rel.tag_name || '').replace(/[^0-9.]/g, '').replace(/\.$/, '') || '0';
+    const newer = compareVersions(version, APP_VERSION) > 0;
     if (newer && rel.html_url) {
       document.getElementById('update-text').textContent =
-        `Matte ${tag} is available — you have ${APP_VERSION}.`;
+        `Matte ${version} is available — you have ${APP_VERSION}.`;
       document.getElementById('update-link').href = rel.html_url;
       banner.hidden = false;
-      updateStatus.textContent = `Update available: Matte ${tag}!`;
+      updateStatus.textContent = `Update available: Matte ${version}!`;
       updateStatus.className = 'newer';
     } else {
       if (!auto) { updateStatus.textContent = `You're up to date (v${APP_VERSION}).`; updateStatus.className = 'okay'; }
