@@ -44,10 +44,9 @@ Make sure you have these installed first:
 
 **Step 1 — Clone the repository**
 ```bash
-git clone https://github.com/sillyjoshua/matte-insider.git
-cd matte-insider
+git clone https://github.com/sillyjoshua/matte.git
+cd matte
 ```
-(For the stable repo use: `git clone https://github.com/sillyjoshua/matte.git`)
 
 **Step 2 — Install dependencies**
 ```bash
