@@ -13,4 +13,4 @@ Regular update to Matte, featuring **Jarvis** and a completely redesigned top ba
 ## Install
 Download **Matte-Setup-1.2.0.exe** and run it.
 
-Built on Electron - MIT License
+Built on Electron

@@ -83,5 +83,3 @@ npm install
 ## Tech
 Built on [Electron](https://www.electronjs.org/) with vanilla HTML/CSS/JS — no frameworks, tiny footprint.
 
-## License
-MIT
