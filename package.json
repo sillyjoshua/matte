@@ -1,11 +1,10 @@
 {
   "name": "matte",
   "productName": "Matte",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Matte — a sleek, modern browser with the Silver Gate UI.",
   "main": "main.js",
   "author": "sillyjoshua",
-  
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder --win nsis"
