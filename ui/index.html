@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src https://api.github.com https:" />
   <title>Matte</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="polish.css" />
 </head>
 <body>
   <!-- Single-row top bar -->
@@ -55,29 +56,22 @@
   </header>
 
   <span id="jarvis-state" hidden>◈ JARVIS</span>
-
   <div id="progressbar"><div id="progressfill"></div></div>
-
-  <!-- Content -->
   <main id="content"></main>
-
   <div id="statusbar" hidden></div>
 
-  <!-- Update banner -->
   <div id="update-banner" hidden>
     <span id="update-text"></span>
     <a id="update-link" href="#" target="_blank">Download</a>
     <button id="update-dismiss">&#x2715;</button>
   </div>
 
-  <!-- Settings overlay -->
   <div id="settings-overlay" hidden>
     <div id="settings-panel">
       <header>
         <h2>Settings</h2>
         <button id="settings-close" title="Close">&#x2715;</button>
       </header>
-
       <section>
         <h3>Theme</h3>
         <div id="theme-grid">
@@ -87,7 +81,6 @@
           <button class="theme-card" data-theme="lightgate"><span class="swatch lg"></span>Light Gate</button>
         </div>
       </section>
-
       <section>
         <h3>Custom CSS</h3>
         <p class="hint">Custom stylesheet applied to Matte's interface.</p>
@@ -97,7 +90,6 @@
           <button id="css-reset" class="btn">Reset</button>
         </div>
       </section>
-
       <section>
         <h3>Jarvis</h3>
         <p class="hint">Type <b>“jarvis go to youtube”</b>, <b>“jarvis search cats”</b> or any natural command in the address bar. Simple commands run locally on your device.</p>
@@ -115,25 +107,20 @@
           </div>
         </div>
       </section>
-
       <section>
         <h3>Updates</h3>
         <label class="check-row">
           <input type="checkbox" id="auto-update" checked />
           Automatically check for updates on startup
         </label>
-        <div class="row">
-          <button id="check-updates" class="btn primary">Check for updates now</button>
-        </div>
+        <div class="row"><button id="check-updates" class="btn primary">Check for updates now</button></div>
         <p id="update-status" class="hint"></p>
       </section>
-
       <footer><span>Matte · Silver Gate · v1.2.1</span></footer>
     </div>
   </div>
 
   <style id="user-css"></style>
-
   <script src="app.js"></script>
 </body>
 </html>
