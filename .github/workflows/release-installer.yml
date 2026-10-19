@@ -26,22 +26,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - name: Synchronize lockfile metadata
+      - name: Generate lockfile for this source snapshot
         run: npm install --package-lock-only --ignore-scripts
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Windows NSIS installer
-        run: npm run dist
+      - name: Build Windows NSIS installer without automatic publishing
+        run: npm run dist -- --publish never
 
-      - name: Attach installer to GitHub release
-        if: github.event_name == 'release'
+      - name: Attach installer to the existing GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.release.tag_name }}
+          tag_name: ${{ github.event.release.tag_name || inputs.tag_name }}
           files: dist/*.exe
           overwrite_files: true
           fail_on_unmatched_files: true
@@ -49,10 +47,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload installer artifact for manual runs
-        if: github.event_name == 'workflow_dispatch'
+      - name: Also keep a workflow artifact for troubleshooting
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Matte-Setup-1.2.2
           path: dist/*.exe
-          if-no-files-found: error
+          if-no-files-found: warn
